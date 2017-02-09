@@ -3,14 +3,19 @@
   margin-right: auto;
   margin-top: 100px;
   background-color: #777;
-  width: 400px;
+  width: 440px;
   border-style: solid;
   border-width: 1px;
+  border-radius: 8px;
 }
 #new-todo-textbox {
-  width:350px;
+  width: 350px;
   margin: auto;
   text-align: center;
+}
+h1 {
+  text-align: center;
+  color: #333;
 }
 ul {
   list-style: none;
@@ -19,7 +24,36 @@ p {
   background-color: #999;
   width: 350px;
 }
-#clear-completed-btn {
-  display: inline;
+a {
+  color: #bbb;
+  border-style: solid;
+  border-color: #777;
+  border-width: 1px;
   text-decoration: none;
+  margin-left: 15px;
+}
+a:hover {
+  color: #fff;
+  border-color: #aaa;
+}
+a:active {
+  border-color: #ccc;
+}
+#clear-completed-btn {
+  display: none;
+  border-style: none;
+}
+#todos-ammount {
+  display: none;
+  margin-left: 25px;
+  color: #222;
+}
+.completed {
+  text-decoration: line-through;
+}
+.visible {
+  display: block;;
+}
+.hidden {
+  display: none;
 }
