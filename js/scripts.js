@@ -1,77 +1,114 @@
-$(document).ready(function() {
-  todoNumber = 0;
-  var completedJobs = 0;
-  //add new item to the list
-  $('#new-todo-textbox').on('keypress', function(e) {
-    if(e.which === 13 && $(this).val() != "") {
-      $('.container').find('li').append('<p><input type="checkbox" value="male" class="checkbox">' + $(this).val() + '</p>');
-      todoNumber++;
-      $(this).val('');
-      if(!$('#todos-ammount').is(':visible')) {
-        $('#todos-ammount').css('display', 'inline');
+$(document).ready(function(){
+  var ToDoList = function(name) {
+    this.el = list = document.querySelector('[data-list="' + name +'"]');
+    this.childs = this.el.querySelectorAll('li');
+
+    this.input = document.querySelector('[data-input="' + name +'"]');
+
+    this.addEntry = function(entry) {
+      this.el.innerHTML += '<li>' + entry + '</li>';
+    }
+
+    this.init = function() {
+      this.addByInput();
+      this.addByArray([]);
+      this.changeStatus();
+      this.removeCompleted();
+      this.showAll();
+      this.showActive();
+      this.showCompleted();
+    }
+  }
+
+  ToDoList.prototype.addByArray = function(array) {
+    this.array = array;
+    var list = this;
+    array.forEach(function (item) {
+      console.log(item);
+      list.addEntry(item);
+    });
+  }
+
+  ToDoList.prototype.addByInput = function() {
+    this.input.addEventListener('keyup', function(e) {
+      e.preventDefault();
+      if(e.keyCode === 13 && e.target.value.length > 0) {
+        this.addEntry(e.target.value);
+        e.target.value = null;
       }
-      $('#todos-ammount').html(todoNumber - completedJobs + ' jobs left');
-    }
-  });
-  //check if job is done and decorate text accordingly
-  $('.container').on('click', '.checkbox',function() {
-    if($(this).is(':checked')) {
-      $(this).parent().addClass("completed");
-      $('#todos-ammount').html(todoNumber - ++completedJobs + ' jobs left');
-    }
-    else {
-      $(this).parent().removeClass("completed");
-      $('#todos-ammount').html(todoNumber - --completedJobs + ' jobs left');
-    }
-    //check if no jobs are done then hide the "clear-completed-btn" button
-    if(completedJobs == 0) {
-      $('#clear-completed-btn').css('display', 'none');
-    }
-    else {
-      $('#clear-completed-btn').css('display', 'inline');
-    }
-  });
-  //clear all completed items
-  $('.container').on('click', '#clear-completed-btn', function() {
-    $('p').each(function(index, element) {
-      if($(this).find(".checkbox").is(':checked')) {
-        completedJobs--;
-        todoNumber--;
-        $(this).remove();
+      $(".todo-ammount").html(updateTodoAmmount() + " jobs not done");
+    }.bind(this));
+  }
+
+  ToDoList.prototype.removeCompleted = function() {
+    var clearBtn = document.getElementsByClassName("button clear-all");
+    clearBtn[0].addEventListener('click', function(e) {
+      $('.completed').remove();
+      $(".todo-ammount").html(updateTodoAmmount() + " jobs not done");
+    });
+  }
+
+  ToDoList.prototype.changeStatus = function() {
+    this.el.addEventListener('click', function(e) {
+      if(e.target.nodeName === 'LI') {
+        e.target.classList.toggle("completed");
+        $(".todo-ammount").html(updateTodoAmmount() + " jobs not done");
       }
-      if(completedJobs == 0) {
-        if(todoNumber == 0) {
-          $('#todos-ammount').css('display', 'none');
+    }.bind(this));
+  }
+
+  ToDoList.prototype.showAll = function() {
+    var showAllBtn = document.getElementsByClassName("button show-all");
+    showAllBtn[0].addEventListener('click', function(e) {
+      var elements = document.getElementsByTagName("li");
+      for(var i = 0, len = elements.length; i < len; i++) {
+        elements[i].classList.remove("hidden");
+      }
+    });
+  }
+
+  ToDoList.prototype.showActive = function() {
+    var showActiveBtn = document.getElementsByClassName("button show-active");
+    showActiveBtn[0].addEventListener('click', function(e) {
+      var elements = document.getElementsByTagName("li");
+      for(var i = 0, len = elements.length; i < len; i++) {
+        if(elements[i].classList.contains("completed")) {
+          elements[i].classList.add("hidden");
         }
-        $('#clear-completed-btn').css('display', 'none');
+        else {
+          elements[i].classList.remove("hidden");
+        }
       }
     });
-  });
-  //"All" filter enabled
-  $(".container").on('click', '#show-all-btn', function() {
-    $('p').each(function(index, element) {
-      $(this).removeClass("hidden");
-      $(this).addClass("visible");
-    });
-  });
-  //"Active" filter enabled
-  $(".container").on('click', '#show-active-btn', function() {
-    $('p').each(function(index, element) {
-      $(this).removeClass("visible hidden");
-      if($(this).hasClass("completed")) {
-        $(this).removeClass("visible");
-        $(this).addClass("hidden");
+  }
+
+  ToDoList.prototype.showCompleted = function() {
+    var showCompletedBtn = document.getElementsByClassName("button show-completed");
+    showCompletedBtn[0].addEventListener('click', function(e) {
+      var elements = document.getElementsByTagName("li");
+      for(var i = 0, len = elements.length; i < len; i++) {
+        if(!elements[i].classList.contains("completed")) {
+          elements[i].classList.add("hidden");
+        }
+        else {
+          elements[i].classList.remove("hidden");
+        }
       }
     });
-  });
-  //"Completed" filter enabled
-  $(".container").on('click', '#show-completed-btn', function() {
-    $('p').each(function(index, element) {
-      $(this).removeClass("visible hidden");
-      if(!$(this).hasClass("completed")) {
-        $(this).removeClass("visible");
-        $(this).addClass("hidden");
+  }
+
+  updateTodoAmmount = function() {
+    var uncompleted = 0;
+    var elements = document.getElementsByTagName("li");
+    for (var i = 0, len = elements.length; i < len; i++) {
+      if(!elements[i].classList.contains("completed")) {
+        uncompleted++;
       }
-    });
-  });
+    }
+    return uncompleted;
+  }
+
+  var lists = {};
+
+  lists.todos = lists.todos || new ToDoList('todos').init();
 });
