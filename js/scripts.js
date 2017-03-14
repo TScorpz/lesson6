@@ -1,13 +1,11 @@
 $(document).ready(function(){
   var ToDoList = function(name) {
     this.el = list = document.querySelector('[data-list="' + name +'"]');
-    this.childs = this.el.querySelectorAll('li');
-
     this.input = document.querySelector('[data-input="' + name +'"]');
 
     this.addEntry = function(entry) {
       this.el.innerHTML += '<li>' + entry + '</li>';
-    }
+    };
 
     this.init = function() {
       this.addByInput();
@@ -17,8 +15,8 @@ $(document).ready(function(){
       this.showAll();
       this.showActive();
       this.showCompleted();
-    }
-  }
+    };
+  };
 
   ToDoList.prototype.addByArray = function(array) {
     this.array = array;
@@ -27,7 +25,7 @@ $(document).ready(function(){
       console.log(item);
       list.addEntry(item);
     });
-  }
+  };
 
   ToDoList.prototype.addByInput = function() {
     this.input.addEventListener('keyup', function(e) {
@@ -36,26 +34,26 @@ $(document).ready(function(){
         this.addEntry(e.target.value);
         e.target.value = null;
       }
-      $(".todo-ammount").html(updateTodoAmmount() + " jobs not done");
+      $(".todo-amount").html(updateTodoamount() + " jobs not done");
     }.bind(this));
-  }
+  };
 
   ToDoList.prototype.removeCompleted = function() {
     var clearBtn = document.getElementsByClassName("button clear-all");
     clearBtn[0].addEventListener('click', function(e) {
       $('.completed').remove();
-      $(".todo-ammount").html(updateTodoAmmount() + " jobs not done");
+      $(".todo-amount").html(updateTodoamount() + " jobs not done");
     });
-  }
+  };
 
   ToDoList.prototype.changeStatus = function() {
     this.el.addEventListener('click', function(e) {
       if(e.target.nodeName === 'LI') {
         e.target.classList.toggle("completed");
-        $(".todo-ammount").html(updateTodoAmmount() + " jobs not done");
+        $(".todo-amount").html(updateTodoamount() + " jobs not done");
       }
-    }.bind(this));
-  }
+    });
+  };
 
   ToDoList.prototype.showAll = function() {
     var showAllBtn = document.getElementsByClassName("button show-all");
@@ -65,7 +63,7 @@ $(document).ready(function(){
         elements[i].classList.remove("hidden");
       }
     });
-  }
+  };
 
   ToDoList.prototype.showActive = function() {
     var showActiveBtn = document.getElementsByClassName("button show-active");
@@ -80,7 +78,7 @@ $(document).ready(function(){
         }
       }
     });
-  }
+  };
 
   ToDoList.prototype.showCompleted = function() {
     var showCompletedBtn = document.getElementsByClassName("button show-completed");
@@ -95,9 +93,9 @@ $(document).ready(function(){
         }
       }
     });
-  }
+  };
 
-  updateTodoAmmount = function() {
+  updateTodoamount = function() {
     var uncompleted = 0;
     var elements = document.getElementsByTagName("li");
     for (var i = 0, len = elements.length; i < len; i++) {
@@ -106,7 +104,7 @@ $(document).ready(function(){
       }
     }
     return uncompleted;
-  }
+  };
 
   var lists = {};
 
